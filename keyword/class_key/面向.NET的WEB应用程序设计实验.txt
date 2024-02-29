@@ -1,0 +1,35 @@
+ASP.NET框架
+ASP.NET MVC
+ASP.NET Core
+C#编程语言
+面向对象编程
+数据库
+ADO.NET的集成
+前端开发
+HTML
+CSS
+JavaScript
+后端开发
+ASP.NET Web API
+Web开发
+数据库设计与操作
+SQL Server数据库
+HTTP协议
+Web服务器
+前后端交互
+前端框架
+React
+Angular
+移动端开发技术
+Xamarin
+微服务架构
+Docker
+云计算
+现代前端开发框架
+用户界面设计
+人机交互设计
+系统拆分与部署
+WEB应用程序开发
+Web前端
+移动应用程序开发
+全栈工程师

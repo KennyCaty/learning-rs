@@ -1,0 +1,23 @@
+1. 数据结构与算法：数组、链表、栈、队列、树、图，算法复杂度分析。
+2. 操作系统：进程管理、内存管理、文件系统。
+3. 计算机网络：HTTP/HTTPS、TCP/IP、网络协议。
+4. 数据库：SQL基础、关系数据库设计、索引优化。
+5. 编程语言：掌握一门后端语言如Java、Python、Node.js。
+6. Web开发：HTML、CSS、JavaScript，前端基础。
+7. 软件工程：版本控制、测试、项目管理。
+   
+额外知识点：
+1. 框架：Spring（Java）、Django（Python）、Express.js（Node.js）。
+2. RESTful API设计。
+3. 微服务架构。
+4. 容器化与容器编排：Docker、Kubernetes。
+5. NoSQL数据库：MongoDB、Redis。
+6. 消息队列：RabbitMQ、Kafka。
+7. 安全性：SSL/TLS、OAuth、常见网络攻击防范。
+
+可能从事的方向：
+1. 后端开发工程师。
+2. 数据工程师。
+3. 微服务架构师。
+4. DevOps工程师。
+5. 云计算工程师。
