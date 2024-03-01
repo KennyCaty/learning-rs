@@ -43,13 +43,23 @@ def train(args, data_info, show_loss):
 
         print('epoch %d    train auc: %.4f  acc: %.4f    eval auc: %.4f  acc: %.4f    test auc: %.4f  acc: %.4f'
                 % (step, train_auc, train_acc, eval_auc, eval_acc, test_auc, test_acc))
+    # 保存模型
+    torch.save(model.state_dict(), '../models/ripple100.pth') 
+    net_args = []
+    net_args.append(n_entity)
+    net_args.append(n_relation)
+    np.save('../models/net_args.npy', net_args)
 
 
+# data: [[user, item, rate]...]
 def get_feed_dict(args, model, data, ripple_set, start, end):
-    items = torch.LongTensor(data[start:end, 1])
-    labels = torch.LongTensor(data[start:end, 2])
+    items = torch.LongTensor(data[start:end, 1])  # 一维 [item1, item2...]
+    labels = torch.LongTensor(data[start:end, 2])  # 一维
     memories_h, memories_r, memories_t = [], [], []
-    for i in range(args.n_hop):   # n_hop*batch_size*n_每层节点数
+    # memories_h:
+    # [[h1, h2,...],  第1层的所有头节点
+    #  [...]...]      第2层..
+    for i in range(args.n_hop):
         memories_h.append(torch.LongTensor([ripple_set[user][i][0] for user in data[start:end, 0]]))
         memories_r.append(torch.LongTensor([ripple_set[user][i][1] for user in data[start:end, 0]]))
         memories_t.append(torch.LongTensor([ripple_set[user][i][2] for user in data[start:end, 0]]))

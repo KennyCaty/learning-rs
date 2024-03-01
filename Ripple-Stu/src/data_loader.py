@@ -32,7 +32,7 @@ def load_rating(args):
     if os.path.exists(rating_file + '.npy'):
         rating_np = np.load(rating_file + '.npy')
     else:
-        rating_np = np.loadtxt(rating_file + '.txt', dtype=np.int32)
+        rating_np = np.loadtxt(rating_file + '.txt', dtype=np.int64)
         np.save(rating_file + '.npy', rating_np)
 
     # n_user = len(set(rating_np[:, 0]))

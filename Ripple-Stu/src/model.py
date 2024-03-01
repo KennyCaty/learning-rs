@@ -13,9 +13,9 @@ class RippleNet(nn.Module):
         self._parse_args(args, n_entity, n_relation)
 
         # 做Embedding 
-        self.entity_emb = nn.Embedding(self.n_entity, self.dim)  # 从Embedding里面取数据是不会改变维度的
-        self.relation_emb = nn.Embedding(self.n_relation, self.dim * self.dim)
-        self.transform_matrix = nn.Linear(self.dim, self.dim, bias=False)
+        self.entity_emb = nn.Embedding(self.n_entity, self.dim) #n_e*dim # 从Embedding里面取数据是不会改变维度的
+        self.relation_emb = nn.Embedding(self.n_relation, self.dim * self.dim) # n_r*dim*dim
+        self.transform_matrix = nn.Linear(self.dim, self.dim, bias=False)  # dim*dim
         self.criterion = nn.BCELoss()
 
     def _parse_args(self, args, n_entity, n_relation):
@@ -32,9 +32,9 @@ class RippleNet(nn.Module):
 
     def forward(
         self,
-        items: torch.LongTensor,
+        items: torch.LongTensor,  # 要预测的物品索引 注意要存在于KG里面
         labels: torch.LongTensor,
-        memories_h: list,
+        memories_h: list,     
         memories_r: list,
         memories_t: list,
     ):
@@ -52,7 +52,7 @@ class RippleNet(nn.Module):
                 self.relation_emb(memories_r[i]).view(
                     -1, self.n_memory, self.dim, self.dim      
                 )
-            ) # 添加了一个维度
+            )
             # [batch size, n_memory, dim]
             t_emb_list.append(self.entity_emb(memories_t[i]))
 
@@ -94,30 +94,33 @@ class RippleNet(nn.Module):
         loss = base_loss + kge_loss + l2_loss
         return dict(base_loss=base_loss, kge_loss=kge_loss, l2_loss=l2_loss, loss=loss)
 
+    # h_emb_list [n_hop, batch size, n_memory, dim]
+    # r_emb_list [n_hop, batch size, n_memory, dim, dim]
+    # t_emb_list [n_hop, batch size, n_memory, dim]
     def _key_addressing(self, h_emb_list, r_emb_list, t_emb_list, item_embeddings):
         o_list = []
         for hop in range(self.n_hop):
             # [batch_size, n_memory, dim, 1]
             h_expanded = torch.unsqueeze(h_emb_list[hop], dim=3)
-
-            # [batch_size, n_memory, dim]
+            
+            # [batch_size, n_memory, dim] 32*16
             Rh = torch.squeeze(torch.matmul(r_emb_list[hop], h_expanded))
-
-            # [batch_size, dim, 1]
+            
+            # [batch_size, dim, 1]  16*1
             v = torch.unsqueeze(item_embeddings, dim=2)
-
+            
             # [batch_size, n_memory]
             probs = torch.squeeze(torch.matmul(Rh, v))
-
+            
             # [batch_size, n_memory]
             probs_normalized = F.softmax(probs, dim=1)
-
+            
             # [batch_size, n_memory, 1]
             probs_expanded = torch.unsqueeze(probs_normalized, dim=2)
-
+            
             # [batch_size, dim]
             o = (t_emb_list[hop] * probs_expanded).sum(dim=1)
-
+            
             item_embeddings = self._update_item_embedding(item_embeddings, o)
             o_list.append(o)
         return o_list, item_embeddings
